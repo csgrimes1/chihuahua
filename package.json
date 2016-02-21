@@ -4,7 +4,7 @@
   "description": "Small footprint unit test library with coverage.",
   "main": "index.js",
   "scripts": {
-    "test": "test/testrunner"
+    "test": "$(npm bin)/nyc test/testrunner"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +16,11 @@
   },
   "devDependencies": {
     "sinon": "^1.17.3"
-  }
+  },
+  "bin": {
+    "suiteness": "./index.js"
+  },
+  "keywords": [
+    "test", "testing", "unit test", "unit testing", "testing library"
+  ]
 }

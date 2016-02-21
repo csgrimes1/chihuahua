@@ -1,2 +1,3 @@
 # suiteness
-Lightweight unit test library with coverage.
+Lightweight unit test library.
+
