@@ -5,6 +5,6 @@ $MYDIR/testrunner.js
 
 PROJECTROOT=$(cd $MYDIR/..  &&  pwd)
 pushd $PROJECTROOT
-echo "================================\n=============Running CLI================="
+echo "================Running CLI================="
 ls -1 spec/*.js | node cli
 popd

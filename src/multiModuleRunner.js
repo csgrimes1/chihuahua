@@ -24,13 +24,8 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         let passes = 0;
         return degent( function *() {
             for (let n = 0; n < testCount; n++) {
-                try {
-                    let result = yield runner(module, n, eventEmitter);
-                    passes++;
-                }
-                catch (x) {
-                    console.error(`EEEEEEEEEEEEEERRRRRRRRRRRROOOOOOOOOOOORRRRRRRRRRR ${x}`);
-                }
+                let result = yield runner(module, n, eventEmitter);
+                passes++;
             }
 
             eventEmitter.emit(constants.EVENTNAME, {

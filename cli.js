@@ -29,22 +29,22 @@ const _ = require('lodash'),
 .then(data => {
     const commandLine = require('./src/commandline'),
         clDefaults = {
-                files: [{
-                    name: 'TESTSCRIPT',
-                    required: !data,
-                    description: 'One or more test modules to run'
-                }],
-                flags: {
-                    outputDir: {
-                        options: 'directory relative to project root',
-                        defaultValue: './.testresults'
-                    }
+            files: [{
+                name: 'TESTSCRIPT',
+                required: !data,
+                description: 'One or more test modules to run'
+            }],
+            flags: {
+                outputDir: {
+                    options: 'directory relative to project root',
+                    defaultValue: './.testresults'
                 }
-            },
-            cl0 = commandLine(process.argv, clDefaults),
-            cl = _.merge({}, cl0, {
-                files: data ? data.concat(cl0.files || []).filter(s => s) : cl0.files
-            });
+            }
+        },
+        cl0 = commandLine(process.argv, clDefaults),
+        cl = _.merge({}, cl0, {
+            files: data ? data.concat(cl0.files || []).filter(s => s) : cl0.files
+        });
 
     return api.runModules(cl.files, cl.flags);
 }).catch((x) => {

@@ -30,9 +30,6 @@ const _ = require('lodash'),
                 return getFlag(arg) ? false : true;
             });
 
-        if (!_.isNumber(firstNonFlagIndex)  ||  firstNonFlagIndex < 0)
-            throw new Error('Expected script parameter in command line.');
-
         return rawArgs.slice(firstNonFlagIndex);
     },
     sliceArgs = function (argv) {

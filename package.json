@@ -1,7 +1,7 @@
 {
-  "name": "suiteness",
+  "name": "pizza-rat",
   "version": "1.0.0",
-  "description": "Small footprint unit test library with coverage.",
+  "description": "Small unit test library that can handle a big load.",
   "main": "index.js",
   "scripts": {
     "test": "$(npm bin)/nyc test/testrunner"
