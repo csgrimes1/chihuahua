@@ -1,17 +1,10 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-const fs = require('fs'),
-    _ = require('lodash'),
-    scripts = _.filter(fs.readdirSync(__dirname), fname => {
-        return fname.match(/.+\.test\.js/);
-    }),
-    promises = _.map(scripts, (fname) => {
-        console.log(`Running test ${fname}`);
-        return require(`./${fname}`);
-    });
+MYDIR=$(cd $(dirname $0) && pwd)
+$MYDIR/testrunner.js
 
-Promise.all(promises)
-    .catch(x => {
-        console.error(`${x}\n${x.stack}`);
-        process.exit(1);
-    });
+PROJECTROOT=$(cd $MYDIR/..  &&  pwd)
+pushd $PROJECTROOT
+echo "================================\n=============Running CLI================="
+ls -1 spec/*.js | node cli
+popd

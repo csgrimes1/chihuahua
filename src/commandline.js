@@ -6,8 +6,11 @@ const _ = require('lodash'),
         const nameFields = (flagInfo.name || '').split('=');
 
         return nameFields.length === 1
-            ? _.merge({}, flagInfo, {value: true})
-            : _.merge({}, flagInfo, {name: nameFields[0], value: nameFields[1]})
+            ? _.merge({}, flagInfo, {
+                    name: flagInfo.name ? camelCase(flagInfo.name) : undefined,
+                    value: true
+                })
+            : _.merge({}, flagInfo, {name: camelCase(nameFields[0]), value: nameFields[1]})
     },
     getFlag = function (arg) {
         const reggie = /(\-+)(\S+)*/,
@@ -54,14 +57,37 @@ const _ = require('lodash'),
             console.log(`\t${file.name}: ${file.description}`);
         });
         _.toPairs(defaults.flags).forEach(pair => {
-            const name = pair[0],
+            const name = unCamel(pair[0]),
                 info = pair[1],
                 alias = info.alias ? ` | -${info.alias} "${info.defaultValue}"` : '';
 
             console.log(`\t"--${name}=${info.defaultValue}"${alias}\t\n\t\tDefault:\t"${info.defaultValue}"`);
             console.log(`\t\tOptions:\t${info.options}`);
         });
-    }
+    },
+    camelCase = function (arg) {
+        const tokens = arg.split('-'),
+            t2 = tokens.slice(0, 1).concat(
+                tokens.slice(1).map(tok => {
+                    return tok.substr(0, 1).toUpperCase()
+                        + tok.substr(1).toLowerCase();
+                })
+            );
+
+        return t2.join('');
+    },
+    unCamel = function(arg) {
+        const walk = function *() {
+            for (const ch of arg) {
+                if (ch === ch.toUpperCase()) {
+                    yield '-';
+                }
+                yield ch.toLowerCase();
+            }
+        };
+
+        return Array.from(walk()).join('');
+    };
 
 /* Watch for the following patterns:
     1. path/node -flag1 -flag2 script arg1 arg2
@@ -93,7 +119,7 @@ module.exports = function (argv, defaults) {
             reqdCount = _.takeWhile(effectiveDefaults.files, f => f.required).length;
 
         if (files.length < reqdCount) {
-            throw new Error(`${reqdCount} files expected; ${files.length} provided`);
+            throw new Error(`${reqdCount} parameters(s) expected; ${files.length} provided`);
         }
 
         return {

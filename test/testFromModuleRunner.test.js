@@ -1,7 +1,7 @@
 'use strict';
 
 const moduleTest = require('../src/testFromModuleRunner'),
-    moduleName = '../sample/test1',
+    moduleName = '../spec/test1',
     EE = require('eventemitter3'),
     eventEmitter = new EE();
 

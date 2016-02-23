@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "app-root-path": "^1.0.0",
     "degent": "^0.2.0",
     "eventemitter3": "^1.1.1",
     "lodash": "^4.5.0",
@@ -18,9 +19,13 @@
     "sinon": "^1.17.3"
   },
   "bin": {
-    "suiteness": "./index.js"
+    "suiteness": "./cli.js"
   },
   "keywords": [
-    "test", "testing", "unit test", "unit testing", "testing library"
+    "test",
+    "testing",
+    "unit test",
+    "unit testing",
+    "testing library"
   ]
 }

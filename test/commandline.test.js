@@ -23,22 +23,23 @@ const parseCommandLine = require('../src/commandline'),
         flags: {
             foo:      {
                 options:      'yes|no',
-                defaultValue: 'yes',
-                alias:        'f'
+                defaultValue: 'yes'
             },
             someFlag: {
                 options:      'true|false',
-                defaultValue: false,
-                alias:        's'
+                defaultValue: false
             }
         }
     };
 
 (function () {
-    const cl = parseCommandLine(['node', '-x', '--', 'index', '---', '-foo=no', 'bar', 'barr'], defaults);
+    const cl = parseCommandLine(['node', '-x', '--', 'index', '---', '-foo=no', '--camel-case', 'bar', 'barr'], defaults);
+
+    console.log(cl)
 
     assert.equal(cl['$0'], 'index');
     assert.equal(cl.flags.foo, 'no');
+    assert.equal(cl.flags.camelCase, true);
     console.log(cl.flags.someFlag, 'false');
 }());
 

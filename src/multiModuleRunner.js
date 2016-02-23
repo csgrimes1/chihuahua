@@ -2,6 +2,7 @@
 
 const proxyquire = require('proxyquire').noPreserveCache(),
     _ = require('lodash'),
+    path = require('path'),
     constants = require('./constants'),
     degent = require('degent'),
     runner = require('./testFromModuleRunner'),
@@ -23,9 +24,12 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         let passes = 0;
         return degent( function *() {
             for (let n = 0; n < testCount; n++) {
-                let result = yield runner(module, n, eventEmitter);
-                if(!_.isError(result)){
+                try {
+                    let result = yield runner(module, n, eventEmitter);
                     passes++;
+                }
+                catch (x) {
+                    console.error(`EEEEEEEEEEEEEERRRRRRRRRRRROOOOOOOOOOOORRRRRRRRRRR ${x}`);
                 }
             }
 
@@ -39,16 +43,44 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         });
     },
     runModules = function (moduleInfos, eventEmitter) {
+        let done;
+        const promise = new Promise(resolve => {
+            done = resolve;
+        });
+
         return degent( function *() {
             for(let n=0; n<moduleInfos.length; n++) {
                 let mi = moduleInfos[n];
                 yield runTests(mi.module, mi.testCount, eventEmitter);
             }
+
+            done();
         });
+        return promise;
+    },
+    appRoot = require('app-root-path'),
+    requirify = function (moduleName) {
+        return path.isAbsolute(moduleName) ? moduleName : `${appRoot}/${moduleName}`;
     };
 
 module.exports = function (modules, eventEmitter) {
-    const moduleInfos = loadModuleInfos(modules);
+    const moduleInfos = loadModuleInfos(modules.map(requirify)),
+        baseEvent = {
+            notify:    'STARTMODULE',
+            dateTime:  new Date(),
+            testCount: _.sumBy(moduleInfos, m => m.testCount)
+        };
 
-    runModules(moduleInfos, eventEmitter);
+    eventEmitter.emit(constants.EVENTNAME, _.merge({}, baseEvent, {
+        notify: 'STARTSUITE'
+    }));
+    return runModules(moduleInfos, eventEmitter).then(() => {
+        const d = new Date();
+
+        eventEmitter.emit(constants.EVENTNAME, _.merge({}, baseEvent, {
+            notify:   'ENDSUITE',
+            dateTime: d,
+            elapsed:  d.getTime() - baseEvent.dateTime.getTime()
+        }));
+    });
 };
