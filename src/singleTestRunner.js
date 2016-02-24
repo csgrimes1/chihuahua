@@ -21,9 +21,9 @@ const _ = require('lodash'),
     };
 
 module.exports = function (context, eventEmitter, testCallback) {
-    emitEvent(eventEmitter, 'TESTSTARTED', context, null);
+    emitEvent(eventEmitter, 'STARTTEST', context, null);
     return new Promise((resolve) => {
-        const TESTENDED = 'TESTENDED',
+        const TESTENDED = 'ENDTEST',
             timerId = setTimeout(() => {
                 const err = new Error('TIMEOUT');
 
