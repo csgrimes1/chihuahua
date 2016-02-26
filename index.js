@@ -5,9 +5,17 @@ const mmRunner = require('./src/multiModuleRunner'),
     _ = require('lodash'),
     reportDriver = require('./src/reportDriver'),
     makePushNode = function (e, children) {
-        const summaryFor = e.notify.substr(5);
+        const summaryFor = e.notify.replace('START', '');
 
         return _.merge({}, _.omit(e, ['notify']), {summaryFor: summaryFor, children: children});
+    },
+    probeForErrors = function (node) {
+        if (node.hasOwnProperty('passed')  &&  !node.passed) {
+            throw new Error('Failure in logs');
+        }
+        else if (node.children) {
+            node.children.forEach(probeForErrors);
+        }
     };
 
 module.exports = _.merge({}, new EE(), {
@@ -44,12 +52,13 @@ module.exports = _.merge({}, new EE(), {
                 case 'ENDTEST':
                 case 'ENDMODULE':
                 case 'ENDSUITE':
-                    if (e.dateTime) {
-                        let top = _.last(stack);
+                    top = _.last(stack);
 
+                    if (e.dateTime) {
                         top.elapsedMS = e.dateTime.getTime()
                             - top.dateTime.getTime();
                     }
+                    top.passed = e.passed
                     stack.splice(stack.length -1, 1);
                     break;
             }
@@ -58,6 +67,16 @@ module.exports = _.merge({}, new EE(), {
             //Write the log...
             reportDriver(log, options);
             return res;
+        }).then(() => {
+            switch (options.consoleOutput){
+                case 'true':
+                case true:
+                case 'yes':
+                case 'y':
+                    require('./src/defaultReporter')(log);
+                    break;
+            }
+            return probeForErrors(log);
         });
     }
 });

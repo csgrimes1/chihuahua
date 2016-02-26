@@ -38,6 +38,10 @@ const _ = require('lodash'),
                 outputDir: {
                     options: 'directory relative to project root',
                     defaultValue: './.testresults'
+                },
+                consoleOutput: {
+                    options: 'when true, allows console output of results',
+                    defaultValue: 'true'
                 }
             }
         },

@@ -55,7 +55,7 @@ const proxyquire = require('proxyquire').noPreserveCache(),
     },
     appRoot = require('app-root-path'),
     requirify = function (moduleName) {
-        return path.isAbsolute(moduleName) ? moduleName : `${appRoot}/${moduleName}`;
+        return path.isAbsolute(moduleName) ? moduleName : path.join(appRoot.toString(), moduleName);
     };
 
 module.exports = function (modules, eventEmitter) {
