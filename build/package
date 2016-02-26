@@ -10,6 +10,8 @@ mkdir -p $PUBDIR
 set -x
 cp $PROJDIR/package.json $PUBDIR/
 cp $PROJDIR/readme.md $PUBDIR/
+cp $PROJDIR/index.js $PUBDIR/
+cp $PROJDIR/cli.js $PUBDIR/
 cp -r $PROJDIR/src $PUBDIR/
 cp -r $PROJDIR/shell $PUBDIR/
 
