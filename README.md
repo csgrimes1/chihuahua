@@ -18,9 +18,9 @@ Our friend the Pizza Rat can carry something that may exceed his or her body wei
 
 Small is good with NPM modules. In the day and age of microservices, we often create ironically large dependency
 trees in the node_modules folder. It's easy to see how this happens. For Pizza Rat to behave deterministically,
-the dependencies in package.json must be hard versions. For example, ```lodash 4.5.0``` is referenced rather
-than ```lodash ^4.5.0```. If Pizza Rat references another module that references a different, hard version
-of ```lodash```, then the tree grows. Perhaps the tree grows for insignificant reasons, such as a new but
+the dependencies in package.json must be hard versions. For example, `lodash 4.5.0` is referenced rather
+than `lodash ^4.5.0`. If Pizza Rat references another module that references a different, hard version
+of `lodash`, then the tree grows. Perhaps the tree grows for insignificant reasons, such as a new but
 unused function. It's at the programmer's discretion whether to host a large dependency tree. However, Pizza
 Rat should not __impose__ slow NPM installs on the developer. If you are Dockerizing
 your Node application, you'll endure significant wait times with NPM install already. It's good to
@@ -47,10 +47,41 @@ scripting.
 npm install pizza-rat --save-dev
 ```
 
-#### Running
+#### Structure of a Test Module
 
-If your tests are in the folder ```specs```:
+```javascript
+
+'use strict';
+
+const EXPECTEDVAL = 2112,
+    SUITE = 'test1',
+    DESCRIPT = 'demo test suite';
+
+module.exports = {
+    beforeTest: t => {
+        //Anything passed as 3rd arg will be wrapped in a promise.
+        //If it is a promise, it will be left as is per
+        //Promise.resolve(...);
+        return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL);
+    },
+
+    tests: {
+        'description 1': context => {
+            context.equal(context.userData, EXPECTEDVAL);
+        },
+        'description 2': context => {
+            context.ok(true, 'always passes');
+            context.equal(loadCount, 1, 'load count must be 1');
+        }
+    }
+};
 
 ```
-ls -1 spec/*.js | node cli --consoleOutput=true
+
+#### Running
+
+If your tests are in the folder `specs`:
+
+```
+ls -1 spec/*.js | node $(npm bin)/pizza-rat --consoleOutput=true
 ```

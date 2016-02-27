@@ -2,14 +2,39 @@
 
 const EE = require('eventemitter3'),
     _ = require('lodash'),
-    colors = require('colors/safe');
+    colors = require('colors/safe'),
+    util = require('util'),
+    reformatError = function (error) {
+        const keepLines = 4,
+            tab = '    ',
+            stackLines = error.stack.replace('\r', '')
+            .split('\n')
+            //Skip over the message
+            .slice(1),
+            stack = stackLines.slice(0, keepLines)
+                .map(line => `${tab}${line}`)
+                .join('\n')
+                    + (stackLines.length > keepLines ? `\n${tab}    ...` : '');
+
+        return `      Error: ${error.message}\n${stack}`;
+    };
 
 module.exports = function report (log) {
     const events = new EE(),
+        makePassFailRollup = function (nodes) {
+            return {
+                count: nodes.length,
+                passes: _.filter(nodes, node => node.passed).length
+            };
+        },
         dumpLogs = function (node) {
-            const eventData = _.chain(node)
-                .omit('children')
-                .value();
+            const rollup = _.isArray(node.children)
+                    ? makePassFailRollup(node.children)
+                    : {},
+                eventData = _.chain(node)
+                    .omit('children')
+                    .merge(rollup)
+                    .value();
 
             events.emit(node.summaryFor, eventData);
             if (node.children) {
@@ -27,15 +52,28 @@ module.exports = function report (log) {
 
         console.log(colors.bold(colors[color](`${data.dateTime} ${passed} of ${count} tests passed  (${data.elapsedMS} MS)`)));
     });
-    events.on('MODULE', data => {
-        console.log(`  ${data.module}`);
+    events.on('MODULE', evt => {
+        console.log(colors.bold(colors[evt.passed ? 'green' : 'red'](`  ${evt.module}`)));
     });
-    events.on('TEST', data => {
+    events.on('TEST', evt => {
         count++;
-        if (data.passed) {
+        console.log(colors[evt.passed ? 'green' : 'red']
+            (`    ${evt.passed ? '*PASS' : '*FAIL'}  ${evt.testInfo.test}  (${evt.elapsedMS} MS)`));
+    });
+    events.on('AFTER-TEST', evt => {
+        if (evt.passed) {
             passed++;
+        } else if (evt.passes >= evt.count) {
+            console.log(colors.red(reformatError(evt.result)));
         }
-        console.log(colors[data.passed ? 'green' : 'red'](`    ${data.testInfo.test}  (${data.elapsedMS} MS)`));
+    });
+    events.on('ASSERTION', evt => {
+        if (!evt.passed) {
+            const args = util.inspect(evt.args, {level: 4}),
+                prettyArgs = args.substr(1, args.length - 2);
+
+            console.log(colors.red(`      Assertion ${JSON.stringify(evt.assertionFunction)}(${prettyArgs}) failed`));
+        }
     });
     dumpLogs(log);
 };

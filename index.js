@@ -10,12 +10,24 @@ const mmRunner = require('./src/multiModuleRunner'),
         return _.merge({}, _.omit(e, ['notify']), {summaryFor: summaryFor, children: children});
     },
     probeForErrors = function (node) {
-        if (node.hasOwnProperty('passed')  &&  !node.passed) {
+        if (node.hasOwnProperty('passed') && node.passed === false) {
             throw new Error('Failure in logs');
         }
         else if (node.children) {
             node.children.forEach(probeForErrors);
         }
+    },
+    //Works with Error or any other object
+    asJson = function (obj) {
+        return _.chain(Object.getOwnPropertyNames(obj))
+            .map(name => [name, obj[name]])
+            .fromPairs()
+            .value();
+    },
+    allChildrenPassed = function (node) {
+        return _.reduce((node.children || []), (accum, child) => {
+            return accum && child.passed;
+        }, true);
     };
 
 module.exports = _.merge({}, new EE(), {
@@ -58,8 +70,15 @@ module.exports = _.merge({}, new EE(), {
                         top.elapsedMS = e.dateTime.getTime()
                             - top.dateTime.getTime();
                     }
-                    top.passed = e.passed
+                    top.result = _.isError(e.result)
+                        ? _.merge({}, asJson(e.result), {type: 'Error'})
+                        : e.result;
                     stack.splice(stack.length -1, 1);
+                    if (e.notify === 'ENDMODULE') {
+                        top.passed = allChildrenPassed(top);
+                    } else {
+                        top.passed = e.passed;
+                    }
                     break;
             }
         });

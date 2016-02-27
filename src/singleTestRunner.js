@@ -4,11 +4,13 @@ const _ = require('lodash'),
     assertionsCtor = require('./assertions'),
     constants = require('./constants'),
     emitEvent = function (eventEmitter, eventName, context, passed, result) {
-        eventEmitter.emit(constants.EVENTNAME, _.merge({
+        const event = _.merge({
             notify:   eventName,
             testInfo: context.testInfo,
             dateTime: new Date()
-        }, makeResult(passed, result)));
+        }, makeResult(passed, result));
+
+        eventEmitter.emit(constants.EVENTNAME, event);
     },
     makeResult = function (passed, result) {
         switch(passed){

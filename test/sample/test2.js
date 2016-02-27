@@ -5,8 +5,6 @@ const EXPECTEDVAL = 2112,
     DESCRIPT = 'demo test suite';
 
 module.exports = {
-    numberOfLoads: () => { return loadCount; },
-
     beforeTest: t => {
         return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL + 1);
     },
