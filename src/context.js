@@ -2,11 +2,11 @@
 
 const _ = require('lodash');
 
-module.exports = function (name, descript, value) {
+module.exports = function (name, descript, value, timeout) {
     return Promise.resolve(value).then(v => {
         return {
             userData: v,
-            timeout: 5000,
+            timeout: timeout || 5000,
 
             setTimeout: delay => {
                 return _.merge({}, this, {timeout: delay});

@@ -14,7 +14,7 @@ module.exports = {
         //Anything passed as 3rd arg will be wrapped in a promise.
         //If it is a promise, it will be left as is per
         //Promise.resolve(...);
-        return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL);
+        return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL, 1000);
     },
 
     tests: {
@@ -24,6 +24,11 @@ module.exports = {
         'description 2': context => {
             context.ok(true, 'always passes');
             context.equal(loadCount, 1, 'load count must be 1');
+        },
+        'async test':    context => {
+            return new Promise(resolve => {
+                setTimeout(resolve, 500);
+            });
         }
     }
 };
