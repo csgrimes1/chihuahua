@@ -11,7 +11,7 @@ const mmRunner = require('./src/multiModuleRunner'),
     },
     probeForErrors = function (node) {
         if (node.hasOwnProperty('passed') && node.passed === false) {
-            throw new Error('Failure in logs');
+            throw new Error('FAILED_TESTS');
         }
         else if (node.children) {
             node.children.forEach(probeForErrors);

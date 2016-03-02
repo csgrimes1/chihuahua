@@ -52,6 +52,8 @@ const _ = require('lodash'),
 
     return api.runModules(cl.files, cl.flags);
 }).catch((x) => {
-    console.error(`${x}\n${x.stack}`);
+    if (x.message !== 'FAILED_TESTS') {
+        console.error(`${x.stack}`);
+    }
     process.exit(1);
 });
