@@ -1,6 +1,8 @@
 # Chihuahua
 *Lightweight unit test library*
 
+![Chihuahua](./logo.png)
+
 Most (if not all) unit test modules are frameworks rather than libraries. A Chihuahua is tiny, but it can 
 navigate a dog park full of larger canines. Like the dog breed, Chihuahua the library is a small footprint
 module that stacks up well against the frameworks. Chihuahua does one thing really well: it runs tests.
@@ -9,17 +11,14 @@ of JSON in a configurable folder. This library does not contain anything but a d
 help you test quickly and identify the cause of test failures. It supports custom reporting as an
 external operation - anyone can write a script to pick up and format the test log.
 
-### Small Can Be Powerful
+### Good Things Can Come From Small Packages
 
 Small is good with NPM modules. In the day and age of microservices, we often create ironically large dependency
-trees in the node_modules folder. It's easy to see how this happens. For Chihuahua to behave deterministically,
-the dependencies in package.json must be hard versions. For example, `lodash 4.5.0` is referenced rather
-than `lodash ^4.5.0`. If Chihuahua references another module that references a different, hard version
-of `lodash`, then the tree grows. Perhaps the tree grows for insignificant reasons, such as a new but
-unused function. It's at the programmer's discretion whether to host a large dependency tree. However, Chihuahua
+trees in the node_modules folder. Often, the size of the tree is a result of secondhand dependencies.
+It's a developer's choice whether to host a large dependency tree. However, Chihuahua
 should not _impose_ slow NPM installs on the developer. If you are Dockerizing
-your Node application, you'll endure significant wait times from NPM install already. It's good to
-keep the node_modules tree trimmed.
+your Node application, you'll endure significant wait times from NPM install already. Therefore, it's good to
+keep the node_modules at a minimum in Chihuahua.
 
 This library is small, and here is why:
 
