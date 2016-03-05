@@ -30,6 +30,10 @@ module.exports = function (context, eventEmitter, testCallback) {
                 const err = new Error('TIMEOUT');
 
                 emitEvent(eventEmitter, TESTENDED, context, false, err);
+                //Make sure asynchronous ordering does not allow unwanted events below.
+                eventEmitter = {
+                    emit: () => {}
+                };
                 resolve(err);
             }, context.timeout),
             fullContext = assertionsCtor(context, eventEmitter),

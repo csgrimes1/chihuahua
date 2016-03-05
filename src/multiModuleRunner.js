@@ -6,6 +6,7 @@ const proxyquire = require('proxyquire').noPreserveCache(),
     constants = require('./constants'),
     degent = require('degent'),
     runner = require('./testFromModuleRunner'),
+    colors = require('colors/safe'),
     loadModuleInfos = function (modules) {
         return _.map(modules, (m) => {
             const imports = proxyquire(m, {}),
@@ -23,18 +24,23 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         });
         let passes = 0;
         return degent( function *() {
-            for (let n = 0; n < testCount; n++) {
-                let result = yield runner(module, n, eventEmitter);
-                passes++;
-            }
+            try {
+                for (let n = 0; n < testCount; n++) {
+                    let result = yield runner(module, n, eventEmitter);
+                    passes++;
+                }
 
-            eventEmitter.emit(constants.EVENTNAME, {
-                notify:    'ENDMODULE',
-                module:    module,
-                dateTime:  new Date(),
-                testCount: testCount,
-                passes:    passes
-            });
+                eventEmitter.emit(constants.EVENTNAME, {
+                    notify: 'ENDMODULE',
+                    module: module,
+                    dateTime: new Date(),
+                    testCount: testCount,
+                    passes: passes
+                });
+            } catch (x) {
+                console.error(colors.red(`${module} failed:\n${x.stack}`));
+                throw new Error('FAILED_TESTS');
+            }
         });
     },
     runModules = function (moduleInfos, eventEmitter) {
