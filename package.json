@@ -1,5 +1,5 @@
 {
-  "name": "pizza-rat",
+  "name": "chihuahua",
   "version": "1.0.0",
   "description": "Small unit test library that can handle a big load.",
   "main": "index.js",
@@ -20,7 +20,8 @@
     "sinon": "1.17.3"
   },
   "bin": {
-    "pizza-rat": "./cli.js"
+    "runsuite": "./cli.js",
+    "newtest": "./src/newtest.sh"
   },
   "keywords": [
     "test",
