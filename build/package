@@ -13,6 +13,5 @@ cp $PROJDIR/readme.md $PUBDIR/
 cp $PROJDIR/index.js $PUBDIR/
 cp $PROJDIR/cli.js $PUBDIR/
 cp -r $PROJDIR/src $PUBDIR/
-cp -r $PROJDIR/shell $PUBDIR/
 
 #npm publish $PUBDIR

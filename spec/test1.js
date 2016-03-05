@@ -17,6 +17,14 @@ module.exports = {
         return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL, 1000);
     },
 
+    afterTest: context => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, 10);
+        });
+    },
+
     tests: {
         'description 1': context => {
             context.equal(context.userData, EXPECTEDVAL);

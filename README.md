@@ -37,6 +37,10 @@ relying on Gulp, Grunt, Gasp, or any task runner, Chihuahua has a simple command
 scripting.
 
 ### Installing
+
+Chihuahua is written in Ecmascript 6. If your NodeJS version does not support arrow
+functions, generators, const, let, etc., Chihuahua won't run.
+
 ```
 npm install chihuahua --save-dev
 ```
@@ -100,6 +104,10 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
  * `t` Instance of `TestInitialization`.
  * This function _must_ return `t.createContext(...)`.
  
+`module.exports.afterTest = function(context) { ... }` (optional)
+
+ * `context` is an instance of TestContext.
+ 
 `module.exports.tests` Object defining tests
 
  * Each property name is a test description.
@@ -120,3 +128,25 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
  * Property `userData`  Data created during setup phase in `beforeTest`.
  * Assertion functions. All of the assertions are wrappers on the
  NodeJS [assert module](https://nodejs.org/dist/latest-v4.x/docs/api/assert.html) functions.
+
+### How it works
+
+Chihuahua is built around the Ecmascript 6 promise. The `beforeTest`,
+`afterTest`, and test functions can all return promises. If they do not return
+promises, they are still treated as promises using the static Promise.resolve(...)
+function.
+
+The library supports test isolation. It reloads each module before running
+each of its tests.
+
+### Features
+
+ * You can print output to the console without affecting test reporters. Test
+ output emits after the suite is completed.
+ * You never have to use a callback to notify your test runners are complete.
+ You can simply return promises rather than calling a `done` or `end` callback
+ function.
+ * Chihuahua gives you complete test isolation. Thanks to `proxyquire`, each
+ test module is loaded before each test runs. This eliminates interference
+ from other tests.
+ 
