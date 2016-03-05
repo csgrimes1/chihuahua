@@ -22,6 +22,12 @@ module.exports = {
         return t.createContext('shortname', 'long description', promise, timeout);
     },
 
+    afterTest: context => {
+        return new Promise(resolve => {
+            setTimeout(resolve, 500);
+        });
+    },
+
     tests: {
         'description 1': context => {
             return new Promise(resolve => {
@@ -52,9 +58,12 @@ module.exports = {
         return t.createContext('shortname', 'long description', userData, 5000/*timeout/ms*/);
     },
 
+    afterTest: context => {
+    },
+
     tests: {
         'description 1': context => {
-        },
+        }
     }
 };
 EOF

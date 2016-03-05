@@ -9,10 +9,15 @@ const proxyquire = require('proxyquire').noPreserveCache(),
     colors = require('colors/safe'),
     loadModuleInfos = function (modules) {
         return _.map(modules, (m) => {
-            const imports = proxyquire(m, {}),
-                testCount = _.keys(imports.tests).length;
+            try {
+                const imports = proxyquire(m, {}),
+                    testCount = _.keys(imports.tests).length;
 
-            return {module: m, testCount: testCount};
+                return {module: m, testCount: testCount};
+            } catch (x) {
+                console.error(colors.red(`${m} failed to load - run file directly from node to find offending line of code:\n${x.stack}`));
+                throw new Error('FAILED_TESTS');
+            }
         });
     },
     runTests = function(module, testCount, eventEmitter) {
@@ -44,20 +49,14 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         });
     },
     runModules = function (moduleInfos, eventEmitter) {
-        let done;
-        const promise = new Promise(resolve => {
-            done = resolve;
-        });
-
-        return degent( function *() {
-            for(let n=0; n<moduleInfos.length; n++) {
+        return degent(function *() {
+            for (let n = 0; n < moduleInfos.length; n++) {
                 let mi = moduleInfos[n];
                 yield runTests(mi.module, mi.testCount, eventEmitter);
             }
 
             done();
         });
-        return promise;
     },
     appRoot = require('app-root-path'),
     requirify = function (moduleName) {
@@ -75,6 +74,7 @@ module.exports = function (modules, eventEmitter) {
     eventEmitter.emit(constants.EVENTNAME, _.merge({}, baseEvent, {
         notify: 'STARTSUITE'
     }));
+
     return runModules(moduleInfos, eventEmitter).then(() => {
         const d = new Date();
 

@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+    expromise = require('./expromise'),
     assertionsCtor = require('./assertions'),
     constants = require('./constants'),
     emitEvent = function (eventEmitter, eventName, context, passed, result) {
@@ -24,27 +25,15 @@ const _ = require('lodash'),
 
 module.exports = function (context, eventEmitter, testCallback) {
     emitEvent(eventEmitter, 'STARTTEST', context, null);
-    return new Promise((resolve) => {
+    return expromise(resolve => {
         const TESTENDED = 'ENDTEST',
-            timerId = setTimeout(() => {
-                const err = new Error('TIMEOUT');
-
-                emitEvent(eventEmitter, TESTENDED, context, false, err);
-                //Make sure asynchronous ordering does not allow unwanted events below.
-                eventEmitter = {
-                    emit: () => {}
-                };
-                resolve(err);
-            }, context.timeout),
             fullContext = assertionsCtor(context, eventEmitter),
             pass = (result) => {
                 emitEvent(eventEmitter, TESTENDED, context, true, result);
-                clearTimeout(timerId);
                 resolve(_.merge({}, result, {pass: true}));
             },
             fail = (x) => {
                 emitEvent(eventEmitter, TESTENDED, context, false, x);
-                clearTimeout(timerId);
                 resolve(x);
             };
 
@@ -58,5 +47,5 @@ module.exports = function (context, eventEmitter, testCallback) {
         } catch (x) {
             fail(x);
         }
-    });
+    }, context.timeout);
 };

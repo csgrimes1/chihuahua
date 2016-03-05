@@ -4,6 +4,7 @@ const mmRunner = require('./src/multiModuleRunner'),
     EE = require('eventemitter3'),
     _ = require('lodash'),
     reportDriver = require('./src/reportDriver'),
+    colors = require('colors/safe'),
     makePushNode = function (e, children) {
         const summaryFor = e.notify.replace('START', '');
 
@@ -96,7 +97,9 @@ module.exports = _.merge({}, new EE(), {
                     break;
             }
             return probeForErrors(log);
-        });
+        }).catch(x => {
+            console.log(colors.red(`Error during test load or beforeTest: ${x.stack ? x.stack : x}`));
+        })
     }
 });
 

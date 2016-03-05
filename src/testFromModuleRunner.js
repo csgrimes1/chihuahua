@@ -16,6 +16,15 @@ module.exports = function (module, testIndex, eventEmitter) {
 
     return testModule.beforeTest(beforeTestApi)
         .then(ctx => {
+            //The userData field may be a promise, and we need to wait on it.
+            return Promise.resolve(ctx.userData)
+                .then(userData => {
+                    return _.merge({},
+                        ctx,
+                        {userData: userData}
+                    );
+                });
+        }).then(ctx => {
             const context = _.merge({}, ctx, {
                 testInfo: {
                     module: module,

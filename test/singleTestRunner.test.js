@@ -39,7 +39,7 @@ const createContext = require('../src/context'),
                     return new Promise(resolve => {
                         setTimeout(() => {
                             resolve();
-                        }, 200);
+                        }, 90);
                     })
                 }).then(() => {
                     stdAssert.ok(false, 'should time out rather than reaching this assert');

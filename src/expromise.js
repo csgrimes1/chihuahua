@@ -26,7 +26,7 @@ module.exports = function (callback, timeout) {
                 fail(new Error(TIMEOUT_ERROR));
             }, timeout || 10000);
 
-            callback(resolve, reject);
+            callback(succeed, fail);
         });
 
     p.exresolve = (result) => {

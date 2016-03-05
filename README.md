@@ -51,25 +51,38 @@ npm install chihuahua --save-dev
 
 'use strict';
 
-const EXPECTEDVAL = 2112,
-    SUITE = 'test1',
-    DESCRIPT = 'demo test suite';
-
 module.exports = {
     beforeTest: t => {
-        //Anything passed as 3rd arg will be wrapped in a promise.
-        //If it is a promise, it will be left as is per
-        //Promise.resolve(...);
-        return t.createContext(SUITE, DESCRIPT, EXPECTEDVAL);
+        const timeout = 1000,
+            promise = new Promise(resolve => {
+                setTimeout(() => resolve(1 + 2), 500);
+            });
+        //Anything passed as 3rd arg will be wrapped in a promise using Promise.resolve(...).
+        //Per Promise.resolve's semantics, the parameter can be a promise or a non-promise.
+        return t.createContext('shortname', 'long description', promise, timeout);
+    },
+
+    afterTest: context => {
+        return new Promise(resolve => {
+            setTimeout(resolve, 500);
+        });
     },
 
     tests: {
         'description 1': context => {
-            context.equal(context.userData, EXPECTEDVAL);
+            return new Promise(resolve => {
+                setTimeout(()=> {
+                    context.equal(context.userData, 3);
+                    resolve();
+                }, 500);
+            });
         },
         'description 2': context => {
+            const testResult = context.userData + 1,
+                expectedValue = 4;
+
             context.ok(true, 'always passes');
-            context.equal(loadCount, 1, 'load count must be 1');
+            context.equal(testResult, expectedValue, 'expect a result of 4');
         }
     }
 };
@@ -128,6 +141,15 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
  * Property `userData`  Data created during setup phase in `beforeTest`.
  * Assertion functions. All of the assertions are wrappers on the
  NodeJS [assert module](https://nodejs.org/dist/latest-v4.x/docs/api/assert.html) functions.
+ 
+#### Creating a new test
+
+```
+# Create a ./specs/testfile.js test module with sample code
+node $(npm bin)/newTest specs testfile
+# Create a ./specs/simpletest.js as a minimal module
+node $(npm bin)/newTest specs simpletest bare
+```
 
 ### How it works
 
@@ -138,6 +160,13 @@ function.
 
 The library supports test isolation. It reloads each module before running
 each of its tests.
+
+Chihuahua promotes structured testing. Each test must have a setup phase in
+`beforeTest`. In contrast with other libraries using the _describe, before,
+beforeEach, afterEach, after_ semantics, Chihuahua does not force you into using
+mutable state variables shared between all of these stages of the test run.
+Rather, `beforeTest` simply allows you to put custom user data in a context,
+and that user data can be immutable.
 
 ### Features
 
