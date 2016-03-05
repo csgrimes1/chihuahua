@@ -107,6 +107,7 @@ If your tests are in the folder `specs`:
 ```
 ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
 ```
+---
 
 ### API
 
@@ -120,12 +121,18 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
 `module.exports.afterTest = function(context) { ... }` (optional)
 
  * `context` is an instance of TestContext.
+ * The function is not required to return any value if it runs synchronously.
+ * The function may return a promise, and if it does, the test runner will
+ wait it out. The wait timeout is the `timeout` field of the context.
  
 `module.exports.tests` Object defining tests
 
  * Each property name is a test description.
  * Each property value is a function taking a single argument, an
  instance of `TestContext`.
+ * A test function is not required to return any value if it runs synchronously.
+ * A test function may return a promise, and if it does, the test runner will
+ wait it out. The wait timeout is the `timeout` field of the context.
  
 #### TestInitialization
 
@@ -133,7 +140,9 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
 
  * `suite` Name of test module.
  * `description` Verbose description of test module.
- * `userData` Test setup data, such as mocks.
+ * `userData` Test setup data, such as mocks. This parameter can be a promise
+ or a non-promise. When it is a promise, it will be resolved and its value
+ will be passed to the tests in the `userData` field of the `TestContext`.
  * `timeout` Optional timeout value, defaulting to 5000 ms.
  
 #### TestContext
@@ -142,7 +151,9 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
  * Assertion functions. All of the assertions are wrappers on the
  NodeJS [assert module](https://nodejs.org/dist/latest-v4.x/docs/api/assert.html) functions.
  
-#### Creating a new test
+---
+
+### Creating a new test
 
 ```
 # Create a ./specs/testfile.js test module with sample code
