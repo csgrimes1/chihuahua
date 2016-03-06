@@ -4,7 +4,31 @@
 
 const _ = require('lodash'),
     buffer = require('buffer'),
-    api = require('./index');
+    api = require('./index'),
+    childProc = require('child_process'),
+    path = require('path'),
+    commands = {
+        newtest: cmdLine => {
+            try {
+                const scriptPath = path.join(__dirname, 'src/newtest.sh'),
+                    buffer = childProc.execFileSync(scriptPath, cmdLine.files.slice(1));
+
+                console.log(buffer.toString());
+            } catch (x) {
+                const stderr = x.stderr.toString(),
+                    stdout = x.stdout.toString(),
+                    output = stderr ? stderr : stdout;
+
+                console.error(output);
+                return x.status;
+            }
+        }
+    },
+    isCommand = function (cmdLine) {
+        const file = cmdLine.files && cmdLine.files[0] || '';
+
+        return Object.keys(commands).indexOf(file) >= 0 ? file : undefined;
+    };
 
 (function () {
     return new Promise(resolve => {
@@ -50,7 +74,14 @@ const _ = require('lodash'),
             files: data ? data.concat(cl0.files || []).filter(s => s) : cl0.files
         });
 
-    return api.runModules(cl.files, cl.flags);
+    const command = isCommand(cl);
+    if (command) {
+        const handler = commands[command];
+
+        process.exit(handler(cl));
+    } else {
+        return api.runModules(cl.files, cl.flags);
+    }
 }).catch((x) => {
     if (x.message !== 'FAILED_TESTS') {
         console.error(`${x.stack}`);

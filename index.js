@@ -98,7 +98,9 @@ module.exports = _.merge({}, new EE(), {
             }
             return probeForErrors(log);
         }).catch(x => {
-            console.log(colors.red(`Error during test load or beforeTest: ${x.stack ? x.stack : x}`));
+            if (x.message !== 'FAILED_TESTS') {
+                console.log(colors.red(`Error during test load or beforeTest: ${x.stack ? x.stack : x}`));
+            }
         })
     }
 });

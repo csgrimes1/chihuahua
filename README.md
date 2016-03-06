@@ -161,6 +161,30 @@ node $(npm bin)/newTest specs testfile
 # Create a ./specs/simpletest.js as a minimal module
 node $(npm bin)/newTest specs simpletest bare
 ```
+*Hint*: You should write a shell script and put it in your source code. Here
+is an example named ./toolbin/newtest.sh:
+
+```
+# !/usr/bin/env bash
+# Assume the test scripts are in the directory ./spec
+$(npm bin)/newtest spec $1 bare
+```
+
+Remember to set execute permission on the file after you create it:
+
+```
+chmod +x toolbin/newtest.sh
+```
+
+Now run it:
+
+```
+toolbin/newtest.sh mynewtest
+```
+
+You should now have a file `./spec/mynewtest.js`.
+
+---
 
 ### How it works
 

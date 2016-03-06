@@ -54,8 +54,6 @@ const proxyquire = require('proxyquire').noPreserveCache(),
                 let mi = moduleInfos[n];
                 yield runTests(mi.module, mi.testCount, eventEmitter);
             }
-
-            done();
         });
     },
     appRoot = require('app-root-path'),
