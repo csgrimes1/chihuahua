@@ -7,6 +7,7 @@ const _ = require('lodash'),
     api = require('./index'),
     childProc = require('child_process'),
     path = require('path'),
+    colors = require('colors/safe'),
     commands = {
         newtest: cmdLine => {
             try {
@@ -84,7 +85,13 @@ const _ = require('lodash'),
     }
 }).catch((x) => {
     if (x.message !== 'FAILED_TESTS') {
-        console.error(`${x.stack}`);
+        if (_.isError(x)) {
+            console.log(colors.red(`Error during test load or beforeTest: ${x.stack ? x.stack : x}`));
+        } else {
+            console.log(colors.red(`Error during test load or beforeTest: ${require('util').inspect(x)}`));
+        }
+        process.exit(126);
     }
+    console.log('bar')
     process.exit(1);
 });

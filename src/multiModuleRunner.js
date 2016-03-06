@@ -15,8 +15,8 @@ const proxyquire = require('proxyquire').noPreserveCache(),
 
                 return {module: m, testCount: testCount};
             } catch (x) {
-                console.error(colors.red(`${m} failed to load - run file directly from node to find offending line of code:\n${x.stack}`));
-                throw new Error('FAILED_TESTS');
+                console.error(colors.red(`${m} failed to load - run file directly from NodeJS to find offending line of code.`));
+                throw new Error('FATAL');
             }
         });
     },
@@ -44,15 +44,19 @@ const proxyquire = require('proxyquire').noPreserveCache(),
                 });
             } catch (x) {
                 console.error(colors.red(`${module} failed:\n${x.stack}`));
-                throw new Error('FAILED_TESTS');
+                throw new Error('FATAL');
             }
         });
     },
     runModules = function (moduleInfos, eventEmitter) {
         return degent(function *() {
-            for (let n = 0; n < moduleInfos.length; n++) {
-                let mi = moduleInfos[n];
-                yield runTests(mi.module, mi.testCount, eventEmitter);
+            try {
+                for (let n = 0; n < moduleInfos.length; n++) {
+                    let mi = moduleInfos[n];
+                    yield runTests(mi.module, mi.testCount, eventEmitter);
+                }
+            } catch (x) {
+                throw new Error('FATAL');
             }
         });
     },

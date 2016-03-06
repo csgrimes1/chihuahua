@@ -7,4 +7,7 @@ PROJECTROOT=$(cd $MYDIR/..  &&  pwd)
 pushd $PROJECTROOT
 echo "================Running CLI================="
 ls -1 spec/*.js | node cli --consoleOutput=true
+RC=$?
 popd
+
+echo "Exit code=$RC"
