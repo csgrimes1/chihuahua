@@ -43,7 +43,7 @@ In the spirit of smallness, I should mention that I don't use Grunt or Gulp. If 
 shells like Bash and DOS, you may need Gulp or Grunt. When your project allows, shell scripts are a great way to
 tool your source code. You really don't need a scaffold to get a Node project up and ready for code. Rather than
 relying on Gulp, Grunt, or any task runner, Chihuahua has a simple command line interface ready for shell
-scripting. You can also `require('chihuahua')` and run it with JavaScript.
+scripting. You can also `require('chihuahua-tester')` and run it with JavaScript.
 
 ### Installing
 
@@ -51,7 +51,7 @@ Chihuahua is written in Ecmascript 6. If your NodeJS version does not support ar
 functions, generators, const, let, etc., Chihuahua won't run.
 
 ```
-npm install chihuahua --save-dev
+npm install chihuahua-tester --save-dev
 ```
 
 If you need `xunit` output for you build process to digest, you can also install the
@@ -186,7 +186,7 @@ test script, allowing you to run `npm test` from a terminal or script.
 #### Running the Module Without the CLI
 
 ```
-const chihuahua = require('chihuahua'),
+const chihuahua = require('chihuahua-tester'),
     tests = ['spec/test1', 'spec/test2'],
     options = {
         consoleOutput: true,
@@ -208,7 +208,7 @@ The example shows briefly how the CLI uses the API. The module API contains one 
    root.
 
 If you use Grunt to run your test suite, you do not need a task runner module. It is
-possible to just `require('chihuahua')` in your Gruntfile, then code a task
+possible to just `require('chihuahua-tester')` in your Gruntfile, then code a task
 that calls `runModules`.
 
 ---

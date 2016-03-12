@@ -1,5 +1,5 @@
 {
-  "name": "chihuahua",
+  "name": "chihuahua-tester",
   "version": "1.0.0",
   "description": "Small unit test library that can handle a big load.",
   "main": "index.js",

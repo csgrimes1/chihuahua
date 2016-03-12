@@ -12,4 +12,4 @@ cp $PROJDIR/index.js $PUBDIR/
 cp $PROJDIR/cli.js $PUBDIR/
 cp -r $PROJDIR/src $PUBDIR/
 
-#npm publish $PUBDIR
+npm publish $PUBDIR
