@@ -18,6 +18,10 @@ problem when a test fails. Many test frameworks and assertion libraries rely on 
 don't really make code read like code to us professional coders! You may use any assertion library you
 like with `chihuahua`, but I just use the canned routines that wrap the NodeJS `assert` module.
 
+Sample output, including coverage:
+
+![Output](./screenshot.png)
+
 ### Good Things Can Come From Small Packages
 
 Small is good with NPM modules. In the day and age of microservices, we often create ironically large dependency
