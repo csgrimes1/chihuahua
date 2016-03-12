@@ -9,7 +9,14 @@ module that stacks up well against the frameworks. Chihuahua does one thing real
 When complete, the results are stored as an intuitive block
 of JSON in a configurable folder. This library does not contain anything but a default reporter, designed to
 help you test quickly and identify the cause of test failures. It supports custom reporting as an
-external operation - anyone can write a script to pick up and format the test log.
+external operation - anyone can write a script to pick up and format the test log. You can also use the 
+`chihuahua-reporters` module.
+
+The library does not concern itself with TDD or BDD semantics. In keeping everything simple and small,
+it is designed for programmers to write and run tests. It is also designed to help quickly locate a
+problem when a test fails. Many test frameworks and assertion libraries rely on syntactic tricks that
+don't really make code read like code to us professional coders! You may use any assertion library you
+like with `chihuahua`, but I just use the canned routines that wrap the NodeJS `assert` module.
 
 ### Good Things Can Come From Small Packages
 
@@ -17,24 +24,26 @@ Small is good with NPM modules. In the day and age of microservices, we often cr
 trees in the node_modules folder. Often, the size of the tree is a result of secondhand dependencies.
 It's a developer's choice whether to host a large dependency tree. However, Chihuahua
 should not _impose_ slow NPM installs on the developer. If you are Dockerizing
-your Node application, you'll endure significant wait times from NPM install already. Therefore, it's good to
+your Node application, you'll endure significant wait times from `npm install` already. Therefore, it's good to
 keep the node_modules at a minimum in Chihuahua.
 
 This library is small, and here is why:
 
 1. The CLI finds tests using STDIN rather than a glob expression. Nothing against globs, but glob libraries
 bring many nested dependencies, adding weight to the package. It's quite easy to pipe the `ls` command
-to Chihuahua.
-2. There are no reporters except a simple console dump (it can be turned off). The library also dumps a JSON log
-to disk. It would be easy to write reporters to read and format the JSON log.
+to Chihuahua. The module may add globbing support in the future if it can do so without adding
+weight to the package.
+2. There are no built-in reporters except a simple console dump (it can be turned off). The library also dumps a JSON log
+to disk. It would be easy to write reporters to read and format the JSON log, and the external `chihuahua-reporters`
+module already supports `xunit`.
 
 ### Task Runners
 
 In the spirit of smallness, I should mention that I don't use Grunt or Gulp. If you need to run tasks across incompatible
 shells like Bash and DOS, you may need Gulp or Grunt. When your project allows, shell scripts are a great way to
 tool your source code. You really don't need a scaffold to get a Node project up and ready for code. Rather than
-relying on Gulp, Grunt, Gasp, or any task runner, Chihuahua has a simple command line interface ready for shell
-scripting.
+relying on Gulp, Grunt, or any task runner, Chihuahua has a simple command line interface ready for shell
+scripting. You can also `require('chihuahua')` and run it with JavaScript.
 
 ### Installing
 
@@ -44,6 +53,18 @@ functions, generators, const, let, etc., Chihuahua won't run.
 ```
 npm install chihuahua --save-dev
 ```
+
+If you need `xunit` output for you build process to digest, you can also install the
+`chihuahua-reporters` module.
+
+```
+npm install chihuahua-reporters --save-dev
+```
+
+If you want to run coverage, install the NYC module. It can be installed globally or
+inside of your project. The reporters module also helps to integrate reporters with
+coverage. Though you can use NYC to launch `chihuahua` without it, I recommend
+installing the reporters module for managing coverage.
 
 ### Structure of a Test Module
 
@@ -102,11 +123,22 @@ return a promise from a function to make Chihuahua wait it out.
 
 ### Running
 
-If your tests are in the folder `specs`:
+If your tests are in the folder `spec` and you do _not_ have `chihuahua-reporters`
+installed:
 
 ```
-ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
+ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true --output-dir=./.testresults
 ```
+
+If you installed the reporters module, a typical test command would be:
+
+```
+$(npm bin)/chi-run spec *.test.js .testresults default coverage xunit
+```
+
+In either case, you can plug this command line into the `package.json` as your
+test script, allowing you to run `npm test` from a terminal or script.
+
 ---
 
 ### API
@@ -151,6 +183,34 @@ ls -1 spec/*.js | node $(npm bin)/runsuite --consoleOutput=true
  * Assertion functions. All of the assertions are wrappers on the
  NodeJS [assert module](https://nodejs.org/dist/latest-v4.x/docs/api/assert.html) functions.
  
+#### Running the Module Without the CLI
+
+```
+const chihuahua = require('chihuahua'),
+    tests = ['spec/test1', 'spec/test2'],
+    options = {
+        consoleOutput: true,
+        outputDir:     './.testresults'
+    };
+
+chihuahua.runModules(tests, options);
+```
+
+The example shows briefly how the CLI uses the API. The module API contains one function:
+
+`chihuahua.runModules(files, options)`
+
+ * `files` List of test files to run, relative to the project root.
+ * `options` 
+   * `consoleOutput` option (`--console-output` option in the CLI) controls
+    display of the default reporter output. Default: `true`.
+   * `outputDir` (`--output-dir` in the CLI) is the directory for report output, relative to the project
+   root.
+
+If you use Grunt to run your test suite, you do not need a task runner module. It is
+possible to just `require('chihuahua')` in your Gruntfile, then code a task
+that calls `runModules`.
+
 ---
 
 ### Creating a new test
