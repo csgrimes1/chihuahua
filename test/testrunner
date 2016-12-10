@@ -2,6 +2,12 @@
 
 MYDIR=$(cd $(dirname $0) && pwd)
 $MYDIR/testrunner.js
+RC=$?
+
+if [ $RC -ne 0 ]; then
+    echo "Exit code=$RC"
+    exit $RC
+fi
 
 PROJECTROOT=$(cd $MYDIR/..  &&  pwd)
 pushd $PROJECTROOT

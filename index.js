@@ -5,6 +5,7 @@ const mmRunner = require('./src/multiModuleRunner'),
     _ = require('lodash'),
     reportDriver = require('./src/reportDriver'),
     colors = require('colors/safe'),
+    cfix = require('./src/circular-fix'),
     makePushNode = function (e, children) {
         const summaryFor = e.notify.replace('START', '');
 
@@ -85,7 +86,7 @@ module.exports = _.merge({}, new EE(), {
         });
         return mmRunner(files, events).then(res => {
             //Write the log...
-            reportDriver(log, options);
+            reportDriver(cfix(log), options);
             return res;
         }).then(() => {
             switch (options.consoleOutput){

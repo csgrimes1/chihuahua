@@ -12,6 +12,6 @@ const fs = require('fs'),
 
 Promise.all(promises)
     .catch(x => {
-        console.error(`${x}\n${x.stack}`);
+        console.error(`TEST FAILURE: ${x}\n${x.stack}`);
         process.exit(1);
     });
