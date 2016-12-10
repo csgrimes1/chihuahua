@@ -1,5 +1,5 @@
 # Chihuahua
-*Lightweight unit test library*
+*Lightweight unit test library* [![Build Status](https://travis-ci.org/csgrimes1/chihuahua-tester.svg?branch=master)](https://travis-ci.org/csgrimes1/chihuahua-tester)
 
 ![Chihuahua](./logo.png)
 
