@@ -1,7 +1,7 @@
 {
   "name": "chihuahua-tester",
   "repository": "https://github.com/csgrimes1/chihuahua-tester",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Small unit test library that can handle a big load.",
   "main": "index.js",
   "scripts": {

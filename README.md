@@ -286,3 +286,5 @@ and that user data can be immutable.
     3. Travis testing
 * 1.0.4   2016-12-10 Fix
     1. Follow up on circular reference bug, setting max depth
+* 1.0.5   2016-12-10 Log output
+    1. Adjusting circular JSON max depth for log output.
