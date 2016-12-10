@@ -284,3 +284,5 @@ and that user data can be immutable.
     1. Fixed reporting error when reporting circular references
     2. Updates to NPM references
     3. Travis testing
+* 1.0.4   2016-12-10 Fix
+    1. Follow up on circular reference bug, setting max depth

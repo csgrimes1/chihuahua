@@ -1,11 +1,14 @@
 'use strict';
 
 const circular = '<<circular reference>>',
+    maxDepthMsg = '<<max depth reached>>',
     _ = require('lodash'),
-    fixCircular = function (obj) {
+    fixCircular = function (obj, maxDepth) {
         let references = new Set();
-        const visitor = x => {
-            if (typeof x !== 'object') {
+        const visitor = (x, depth) => {
+            if (depth >= maxDepth) {
+                return maxDepthMsg;
+            } else if (typeof x !== 'object') {
                 return x;
             } else if (references.has(x)) {
                 return circular;
@@ -14,15 +17,15 @@ const circular = '<<circular reference>>',
             references.add(obj);
             const pairs = _.toPairs(x)
                 .map(pair => {
-                    return [pair[0], visitor(pair[1])];
+                    return [pair[0], visitor(pair[1], depth + 1)];
                 });
 
             return _.fromPairs(pairs);
         };
 
-        return visitor(obj);
+        return visitor(obj, 0);
     };
 
-module.exports = function (obj) {
-    return fixCircular(obj);
+module.exports = function (obj, maxDepth) {
+    return fixCircular(obj, maxDepth);
 };
