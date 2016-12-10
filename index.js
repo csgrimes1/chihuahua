@@ -86,7 +86,7 @@ module.exports = _.merge({}, new EE(), {
         });
         return mmRunner(files, events).then(res => {
             //Write the log...
-            reportDriver(cfix(log), options);
+            reportDriver(cfix(log, 9), options);
             return res;
         }).then(() => {
             switch (options.consoleOutput){

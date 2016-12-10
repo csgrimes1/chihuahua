@@ -7,11 +7,18 @@ const stdAssert = require('assert'),
             let circ = {a: {b: {c: null}}};
             circ.a.b.c = circ;
 
-            const final = cfix(circ);
+            const final = cfix(circ, 10);
 
             console.log(JSON.stringify(final));
-        }
+        },
 
+        () => {
+            const obj = {a: {b: {c: { d: {}}}}},
+                final = cfix(obj, 2);
+
+            console.log(JSON.stringify(final));
+            stdAssert.deepEqual(final, {a: {b: '<<max depth reached>>'}}, 'should cap depth');
+        }
     ].map(foo => {
         try {
             return Promise.resolve(foo());
