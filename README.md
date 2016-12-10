@@ -277,4 +277,10 @@ and that user data can be immutable.
  * Chihuahua gives you complete test isolation. Thanks to `proxyquire`, each
  test module is loaded before each test runs. This eliminates interference
  from other tests.
- 
+
+### History
+* 1.0.2   2016-03-16 Initial release
+* 1.0.3   2016-12-10 Fixes
+    1. Fixed reporting error when reporting circular references
+    2. Updates to NPM references
+    3. Travis testing
