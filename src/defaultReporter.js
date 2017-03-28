@@ -7,7 +7,8 @@ const EE = require('eventemitter3'),
     reformatError = function (error) {
         const keepLines = 4,
             tab = '    ',
-            stackLines = error.stack.replace('\r', '')
+            safeError = Object.assign({stack: `${error}`}, error),
+            stackLines = safeError.stack.replace('\r', '')
             .split('\n')
             //Skip over the message
             .slice(1),
@@ -24,7 +25,8 @@ module.exports = function report (log) {
         makePassFailRollup = function (nodes) {
             return {
                 count: nodes.length,
-                passes: _.filter(nodes, node => node.passed).length
+                passes: _.filter(nodes, node => node.passed).length,
+                skipped: _.filter(nodes, node => node.passed === 'skipped').length
             };
         },
         dumpLogs = function (node) {
@@ -42,28 +44,32 @@ module.exports = function report (log) {
             }
             events.emit(`AFTER-${node.summaryFor}`, eventData);
         };
-    let count = 0, passed = 0;
+    let count = 0, passed = 0, skipped = 0;
 
     events.on('SUITE', data => {
         console.log(colors.bold(`${data.dateTime} START RUN`));
     });
     events.on('AFTER-SUITE', data => {
-        const color = passed < count ? 'red' : 'green';
+        const color = passed < count - skipped ? 'red' : 'green';
 
-        console.log(colors.bold(colors[color](`${data.dateTime} ${passed} of ${count} tests passed  (${data.elapsedMS} MS)`)));
+        console.log(colors.bold(colors[color](
+            `${data.dateTime} ${passed} of ${count - skipped} tests passed${skipped ? `; ${skipped} skipped` : ''}  (${data.elapsedMS} MS)`
+        )));
     });
     events.on('MODULE', evt => {
         console.log(colors.bold(colors[evt.passed ? 'green' : 'red'](`  ${evt.module}`)));
     });
     events.on('TEST', evt => {
         count++;
-        console.log(colors[evt.passed ? 'green' : 'red']
-            (`    ${evt.passed ? '*PASS' : '*FAIL'}  ${evt.testInfo.test}  (${evt.elapsedMS} MS)`));
+        console.log(colors[evt.passed ? evt.passed === 'skipped' ? 'cyan' : 'green' : 'red']
+            (`    ${evt.passed ? (evt.passed === 'skipped' ? '*SKIP' : '*PASS') : '*FAIL'}  ${evt.testInfo.test}  (${evt.elapsedMS} MS)`));
     });
     events.on('AFTER-TEST', evt => {
-        if (evt.passed) {
+        if (evt.passed === 'skipped') {
+            skipped++;
+        } else if (evt.passed) {
             passed++;
-        } else if (evt.passes >= evt.count) {
+        } else if (evt.passes >= evt.count && evt.result) {
             console.log(colors.red(reformatError(evt.result)));
         }
     });

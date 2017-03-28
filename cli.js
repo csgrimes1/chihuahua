@@ -83,7 +83,11 @@ const _ = require('lodash'),
     } else {
         return api.runModules(cl.files, cl.flags);
     }
-}).catch((x) => {
+})
+    .then(ec => {
+        process.exit(ec);
+    })
+    .catch((x) => {
     if (x.message !== 'FAILED_TESTS') {
         if (_.isError(x)) {
             console.log(colors.red(`Error during test load or beforeTest: ${x.stack ? x.stack : x}`));
@@ -92,6 +96,5 @@ const _ = require('lodash'),
         }
         process.exit(126);
     }
-    console.log('bar')
     process.exit(1);
 });

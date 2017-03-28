@@ -7,6 +7,7 @@ const fs = require('fs'),
         return path.isAbsolute(moduleName) ? moduleName : path.join(appRoot.toString(), moduleName);
     },
     mkdirp = function (dir) {
+        console.log(`dir to make: ${dir}`);
         if (fs.existsSync(dir)){
             return;
         }

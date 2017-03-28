@@ -1,7 +1,7 @@
 {
   "name": "chihuahua-tester",
   "repository": "https://github.com/csgrimes1/chihuahua-tester",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Small unit test library that can handle a big load.",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,7 @@
     "colors": "1.1.2",
     "degent": "0.2.0",
     "eventemitter3": "2.0.2",
-    "lodash": "4.17.2",
-    "proxyquire": "1.7.10"
+    "lodash": "4.17.2"
   },
   "devDependencies": {
     "sinon": "1.17.6"

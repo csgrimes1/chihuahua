@@ -18,6 +18,7 @@ const mmRunner = require('./src/multiModuleRunner'),
         else if (node.children) {
             node.children.forEach(probeForErrors);
         }
+        return 0;
     },
     //Works with Error or any other object
     asJson = function (obj) {
@@ -102,6 +103,7 @@ module.exports = _.merge({}, new EE(), {
             if (x.message !== 'FAILED_TESTS') {
                 throw x;
             }
+            return 1;
         })
     }
 });

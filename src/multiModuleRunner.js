@@ -1,7 +1,6 @@
 'use strict';
 
-const proxyquire = require('proxyquire').noPreserveCache(),
-    _ = require('lodash'),
+const _ = require('lodash'),
     path = require('path'),
     constants = require('./constants'),
     degent = require('degent'),
@@ -10,7 +9,7 @@ const proxyquire = require('proxyquire').noPreserveCache(),
     loadModuleInfos = function (modules) {
         return _.map(modules, (m) => {
             try {
-                const imports = proxyquire(m, {}),
+                const imports = require(m),
                     testCount = _.keys(imports.tests).length;
 
                 return {module: m, testCount: testCount};
@@ -31,7 +30,7 @@ const proxyquire = require('proxyquire').noPreserveCache(),
         return degent( function *() {
             try {
                 for (let n = 0; n < testCount; n++) {
-                    let result = yield runner(module, n, eventEmitter);
+                    yield runner(module, n, eventEmitter);
                     passes++;
                 }
 

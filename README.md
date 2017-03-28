@@ -274,9 +274,6 @@ and that user data can be immutable.
  * You never have to use a callback to notify your test runners are complete.
  You can simply return promises rather than calling a `done` or `end` callback
  function.
- * Chihuahua gives you complete test isolation. Thanks to `proxyquire`, each
- test module is loaded before each test runs. This eliminates interference
- from other tests.
 
 ### History
 * 1.0.2   2016-03-16 Initial release
@@ -288,3 +285,9 @@ and that user data can be immutable.
     1. Follow up on circular reference bug, setting max depth
 * 1.0.5   2016-12-10 Log output
     1. Adjusting circular JSON max depth for log output.
+* 1.0.6   2017-03-27 Fix + Features
+    1. Fixed error reporting when throwing non-error object.
+    2. Temporarily disabled isolation of tests; will revisit ASAP.
+       This fixes stack trace line numbers.
+    3. Added support for skipping tests that start with 'skip!' in
+       test description.

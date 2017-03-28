@@ -19,7 +19,7 @@ const _ = require('lodash'),
             case false:
                 return {passed: passed, result: result};
             default:
-                return {};
+                return {passed: 'skipped', result: 'skipped'};
         }
     };
 
@@ -29,7 +29,8 @@ module.exports = function (context, eventEmitter, testCallback) {
         const TESTENDED = 'ENDTEST',
             fullContext = assertionsCtor(context, eventEmitter),
             pass = (result) => {
-                emitEvent(eventEmitter, TESTENDED, context, true, result);
+                const passResult = testCallback.skipped ? 'skipped' : true;
+                emitEvent(eventEmitter, TESTENDED, context, passResult, result);
                 resolve(_.merge({}, result, {pass: true}));
             },
             fail = (x) => {

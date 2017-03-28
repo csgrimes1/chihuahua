@@ -1,18 +1,23 @@
 'use strict';
 
-const proxyquire = require('proxyquire').noPreserveCache(),
+const
     _ = require('lodash'),
     contextCreator = require('./context'),
+    inspect = require('./inspector'),
     beforeTestApi = {
-        createContext: contextCreator
+        createContext: contextCreator,
+        inspect: inspect
     },
     singleTestRunner = require('./singleTestRunner'),
-    expromise = require('./expromise');
+    expromise = require('./expromise'),
+    skippedTest = Object.assign(() => {}, {skipped: true});
 
 module.exports = function (module, testIndex, eventEmitter) {
-    const testModule = proxyquire(module, {}),
+    const testModule = require(module),
         targetTestName = _.keys(testModule.tests)[testIndex],
-        testFunction = testModule.tests[targetTestName];
+        testFunction =targetTestName.toLowerCase().startsWith('skip!')
+            ? skippedTest
+            : testModule.tests[targetTestName];
 
     return testModule.beforeTest(beforeTestApi)
         .then(ctx => {
@@ -29,7 +34,8 @@ module.exports = function (module, testIndex, eventEmitter) {
                 testInfo: {
                     module: module,
                     test:   targetTestName
-                }
+                },
+                inspect: inspect
             });
 
             return singleTestRunner(context, eventEmitter, testFunction)
