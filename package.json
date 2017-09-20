@@ -1,7 +1,7 @@
 {
   "name": "chihuahua-tester",
   "repository": "https://github.com/csgrimes1/chihuahua-tester",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Small unit test library that can handle a big load.",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
     "lodash": "4.17.2"
   },
   "devDependencies": {
+    "bluebird": "3.5.0",
     "sinon": "1.17.6"
   },
   "bin": {

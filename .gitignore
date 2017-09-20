@@ -36,4 +36,5 @@ node_modules
 .nyc_output/
 .testresults/
 .publish/
-
+.DS_Store
+package-lock.json

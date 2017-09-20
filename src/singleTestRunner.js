@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash'),
+    promish = require('./promish'),
     expromise = require('./expromise'),
     assertionsCtor = require('./assertions'),
     constants = require('./constants'),
@@ -39,7 +40,7 @@ module.exports = function (context, eventEmitter, testCallback) {
             };
 
         try {
-            Promise.resolve(testCallback(fullContext))
+            promish(testCallback(fullContext))
                 .then(result => {
                     pass(result);
                 }).catch(x => {

@@ -5,6 +5,7 @@ const createContext = require('../src/context'),
     runner = require('../src/singleTestRunner'),
     EE = require('eventemitter3'),
     eventEmitter = new EE(),
+    bluebird = require('bluebird'),
     promises = [
         (function () {
             const expectedValue = 999,
@@ -45,6 +46,15 @@ const createContext = require('../src/context'),
                     stdAssert.ok(false, 'should time out rather than reaching this assert');
                 }).catch(() => {
                 });
+            });
+        })(),
+
+        (function () {
+            const context = createContext('str', '');
+
+            return context.then(c => {
+                return runner(c.setTimeout(20), eventEmitter, c2 =>
+                    bluebird.reject('yeah, it is bad'));
             });
         })()
     ];
